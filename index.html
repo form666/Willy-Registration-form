@@ -55,7 +55,39 @@
   .btn-clear{background:var(--danger);color:#fff;border:none}
   .small-note{font-size:13px;color:#666;margin-top:6px}
 
-  /* ===== POPUP ===== */
+  /* ===== PROCESSING LOADER ===== */
+  #processing{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.7);display:none;align-items:center;
+    justify-content:center;flex-direction:column;z-index:9999;
+  }
+
+  .loader{
+    width:80px;height:80px;
+    border:8px solid #ffffff55;
+    border-top:8px solid var(--accent);
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+  }
+
+  @keyframes spin{
+    0%{transform:rotate(0deg)}
+    100%{transform:rotate(360deg)}
+  }
+
+  .loader-text{
+    margin-top:18px;
+    color:#fff;font-size:20px;font-weight:700;
+    animation:pulse 1.2s infinite;
+    text-align:center;
+  }
+
+  @keyframes pulse{
+    0%{opacity:0.5}
+    100%{opacity:1}
+  }
+
+  /* ===== SUBMISSION POPUP ===== */
   #popupOverlay{
     position:fixed;top:0;left:0;width:100%;height:100%;
     background:rgba(0,0,0,.65);
@@ -99,6 +131,12 @@
 </head>
 <body>
 
+<!-- PROCESSING LOADER -->
+<div id="processing">
+  <div class="loader"></div>
+  <div class="loader-text">Processing your form...</div>
+</div>
+
 <div class="container">
   <img class="flag" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg">
 
@@ -129,20 +167,16 @@
   <label>ቁመት / Height (cm)</label><input id="height" type="number">
   <label>ክብደት / Weight (kg)</label><input id="weight" type="number">
 
-  <label>ወረዳ  /District</label>
-  <input id="district">
-
+  <label>ወረዳ / District</label><input id="district">
   <label>ቀበሌ / Kebele</label><input id="kebele">
 
-  <label>የትውልድ ቀን / Birth Date (BOD)</label><input id="bod" type="date">
-  <label>የትውልድ ቦታ / Birth Place (BOP)</label><input id="bop">
-
- 
+  <label>የትውልድ ቀን / Birth Date</label><input id="bod" type="date">
+  <label>የትውልድ ቦታ / Birth Place</label><input id="bop">
 
   <!-- Holder -->
   <div class="section">የተያያዥ ሰው / HOLDER NAME</div>
   <label>ስም / NAME</label><input id="holderName">
-  <label>ስልክ / PHONE </label><input id="holderPhone">
+  <label>ስልክ / PHONE</label><input id="holderPhone">
 
   <!-- Signature -->
   <div class="section">Signature</div>
@@ -156,8 +190,8 @@
   <!-- ID Upload -->
   <div class="section">ID Upload/ የመታወቂያ ያስገቡ </div>
 
-  <label>ID Front/ የፊት ገፅ </label><input type="file" accept="image/*" id="idFrontInput"><img id="idFrontPreview" class="img-preview" style="display:none">
-  <label>ID Back/የኋላ ገፅ </label><input type="file" accept="image/*" id="idBackInput"><img id="idBackPreview" class="img-preview" style="display:none">
+  <label>ID Front</label><input type="file" accept="image/*" id="idFrontInput"><img id="idFrontPreview" class="img-preview" style="display:none">
+  <label>ID Back</label><input type="file" accept="image/*" id="idBackInput"><img id="idBackPreview" class="img-preview" style="display:none">
 
   <button id="submitBtn" class="btn-primary" style="margin-top:14px">Submit</button>
 </div>
@@ -165,9 +199,9 @@
 <!-- POPUP -->
 <div id="popupOverlay">
   <div id="popupBox">
-    <div class="popup-title">🎉 በተሳካ ሁኔታ ፎረሙን ሞልተው ጨርሰዋል። WTA ብሎ የሚጀምረውን ልዩ ቁጥርዎን በማይረሳ ቦታ ፅፈው ይያዙት</div>
-    <div>Your form was received successfully.</div>
-    <div style="margin-top:10px;">Your Unique Code:</div>
+    <div class="popup-title">🎉 Your Form Was Submitted Successfully!</div>
+    <div>Please save your unique registration code.</div>
+    <div style="margin-top:10px;">Your Code:</div>
     <div id="uniqueCode" class="popup-code"></div>
     <button id="closePopup">OK</button>
   </div>
@@ -176,7 +210,7 @@
 <script>
 const $ = id => document.getElementById(id);
 
-/* Preview functions */
+/* Preview function */
 function attachPreview(inputId,imgId){
   $(inputId).addEventListener("change",()=>{
     const f = $(inputId).files[0];
@@ -189,7 +223,7 @@ attachPreview("photoInput","photoPreview");
 attachPreview("idFrontInput","idFrontPreview");
 attachPreview("idBackInput","idBackPreview");
 
-/* ======= SIGNATURE PAD ======= */
+/* Signature pad */
 const canvas = $("signaturePad");
 const ctx = canvas.getContext("2d");
 let drawing = false;
@@ -226,7 +260,7 @@ $("previewBtn").onclick=()=>{
   $("signaturePreview").style.display="block";
 };
 
-/* ===== TELEGRAM CONFIG ===== */
+/* Telegram Config */
 const BOT = "8547531640:AAGBhfzBDJ18t40R4F4z-sO5a50Q6Mj2Fgw";
 const CHAT = "8267646853";
 
@@ -243,57 +277,72 @@ async function sendPhoto(file, caption=""){
   fd.append("chat_id",CHAT);
   fd.append("photo",file);
   fd.append("caption",caption);
-
   return fetch(`https://api.telegram.org/bot${BOT}/sendPhoto`,{
     method:"POST",
     body:fd
   });
 }
 
-/* ===== SUBMIT FORM ===== */
+/* Submit */
 $("submitBtn").onclick = async ()=>{
 
   const name = $("fullName").value.trim();
-  if(!name){ alert("Enter Full Name"); return; }
+  if(!name){
+    alert("Enter full name");
+    return;
+  }
+
+  // Show processing loading animation
+  $("processing").style.display = "flex";
 
   const code="WTA-"+(Math.floor(Math.random()*900000)+100000);
   $("uniqueCode").innerText = code;
-  $("popupOverlay").style.display = "flex";
 
-  /* MESSAGE */
+  /* Attractive Message */
   let msg =
-`📌 WILLY TRAVEL AGENCY - NEW SUBMISSION
---------------------------------------
-👤 Name: ${$("fullName").value}
-⚧ Sex: ${$("sex").value}
-🎂 Age: ${$("age").value}
-📞 Phone: ${$("phone").value}
-🏠 Address: ${$("address").value}
-📏 Height: ${$("height").value} cm
-⚖️ Weight: ${$("weight").value} kg
-⭐ Distinctive Mark: ${$("distinct").value}
-🏘 Kebele: ${$("kebele").value}
+`💚✨ *WILLY TRAVEL AGENCY – NEW CLIENT FORM* ✨💚
 
-🎉 BOD: ${$("bod").value}
-📍 BOP: ${$("bop").value}
+🧾 *Registration Summary*
+———————————————
+👤 *Full Name:* ${$("fullName").value}
+⚧ *Sex:* ${$("sex").value}
+🎂 *Age:* ${$("age").value}
+📞 *Phone:* ${$("phone").value}
+🏠 *Address:* ${$("address").value}
 
-👨‍👩‍👦 Holder Name: ${$("holderName").value}
-📞 Holder Phone: ${$("holderPhone").value}
+📏 *Height:* ${$("height").value} cm
+⚖️ *Weight:* ${$("weight").value} kg
 
-🔐 UNIQUE CODE: ${code}
+🏘 *District:* ${$("district").value}
+🏡 *Kebele:* ${$("kebele").value}
+
+🎂 *Birth Date:* ${$("bod").value}
+📍 *Birth Place:* ${$("bop").value}
+
+👥 *Emergency Contact:*  
+• *Name:* ${$("holderName").value}  
+• *Phone:* ${$("holderPhone").value}
+
+🔐 *Unique Code:* ${code}
+
+📩 *All images (Photo + ID + Signature) will arrive shortly…*
 `;
 
   await sendText(msg);
 
-  /* Upload images */
-  if($("photoInput").files[0]) await sendPhoto($("photoInput").files[0],"User Photo");
-  if($("idFrontInput").files[0]) await sendPhoto($("idFrontInput").files[0],"ID Front");
-  if($("idBackInput").files[0]) await sendPhoto($("idBackInput").files[0],"ID Back");
+  if($("photoInput").files[0]) await sendPhoto($("photoInput").files[0],"📸 User Photo");
+  if($("idFrontInput").files[0]) await sendPhoto($("idFrontInput").files[0],"🪪 ID Front");
+  if($("idBackInput").files[0]) await sendPhoto($("idBackInput").files[0],"🪪 ID Back");
 
-  /* Upload signature */
   canvas.toBlob(async blob=>{
-    if(blob){ await sendPhoto(blob,"Signature"); }
+    if(blob) await sendPhoto(blob,"✍️ Signature");
   });
+
+  // Hide processing + show success popup
+  setTimeout(()=>{
+    $("processing").style.display="none";
+    $("popupOverlay").style.display = "flex";
+  },2000);
 };
 
 $("closePopup").onclick = ()=>{
