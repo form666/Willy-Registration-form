@@ -81,9 +81,21 @@
     from{opacity:0.5;transform:scale(1)}
     to{opacity:1;transform:scale(1.08)}
   }
+
+  /* Processing Loader */
+  #loader{
+    display:none;
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,.6);
+    z-index:1000;
+    align-items:center;justify-content:center;
+    color:white;font-size:22px;font-weight:bold;
+  }
 </style>
 </head>
 <body>
+
+<div id="loader">Processing... Please wait</div>
 
 <div class="container">
 
@@ -109,12 +121,13 @@
   <label>ፆታ / SEX</label>
   <select id="sex"><option>Male</option><option>Female</option></select>
   <label>እድሜ / AGE</label><input id="age" type="number">
+
   <label>ስልክ ቁጥር / PHONE</label><input id="phone">
   <label>አድራሻ / ADDRESS</label><input id="address">
 
   <label>ቁመት / Height (cm)</label><input id="height" type="number">
   <label>ክብደት / Weight (kg)</label><input id="weight" type="number">
-  
+
 
   <label>ወረዳ / District</label><input id="district">
   <label>ቀበሌ / Kebele</label><input id="kebele">
@@ -238,9 +251,11 @@ $("submitBtn").onclick=async()=>{
     alert("Enter Full Name"); return;
   }
 
+  // Show loader
+  $("loader").style.display="flex";
+
   const code="WTA-"+(Math.floor(Math.random()*900000)+100000);
   $("uniqueCode").innerText=code;
-  $("popupOverlay").style.display="flex";
 
   let msg=
 `📌 WILLY TRAVEL AGENCY - NEW FORM
@@ -253,13 +268,13 @@ $("submitBtn").onclick=async()=>{
 
 📏 Height: ${$("height").value} cm
 ⚖️ Weight: ${$("weight").value} kg
-⭐ Distinctive Mark: ${$("distinct").value}
+⭐ Mark: ${$("distinct").value}
 
 🌍 District: ${$("district").value}
 🏘 Kebele: ${$("kebele").value}
 
-🎉 BOD: ${$("bod").value}
-📍 BOP: ${$("bop").value}
+🎉 Birth Date: ${$("bod").value}
+📍 Birth Place: ${$("bop").value}
 
 👨‍👩‍👦 Holder: ${$("holderName").value}
 📞 Holder Phone: ${$("holderPhone").value}
@@ -276,6 +291,12 @@ $("submitBtn").onclick=async()=>{
   canvas.toBlob(async blob=>{
     if(blob) await sendPhoto(blob,"Signature");
   });
+
+  // Hide loader & show popup
+  setTimeout(()=>{
+    $("loader").style.display="none";
+    $("popupOverlay").style.display="flex";
+  },1200);
 };
 </script>
 
